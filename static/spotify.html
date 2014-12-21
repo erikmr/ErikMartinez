@@ -1,0 +1,212 @@
+ <meta charset="UTF-8" />
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+<style>
+body {
+	padding: 20px;
+	margin: 0px;
+	padding: 0px;
+	z-index: 999;
+	text-align: left;  
+ 	overflow:auto	
+}
+
+#search-form,.form-control {
+	margin-bottom: 20px;
+}
+#divContainer{
+margin-top: 50px;
+}
+.cover {
+	width: 300px;
+	height: 300px;
+	display: inline-block;
+	background-size: cover;
+}
+
+.cover:hover {
+	cursor: pointer;
+}
+
+.cover.playing {
+	border: 5px solid #e45343;
+}
+</style>
+
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container">
+		<div class="row">
+			<div class="col-xs-6">
+			        <div class="navbar-header">
+			          <a class="navbar-brand" href="#"> <img src="img/hero-icon-venn-ani.png" style="height: 32px"/>
+			          &nbsp;| Demo Spotify Web API by Erik Martinez</a>
+			        </div>
+			</div>
+			<div class="col-xs-6 " style="padding:10px;text-align:right">
+				<button class="btn btn-success" ng-click="goHome()" > 
+				Inicio</button>
+				<button class="btn btn-warning" ng-click="goCv()" > 
+				Acerca de mi</button>				
+			</div>
+		</div>	      
+
+
+
+      </div>
+   </div>
+	<br>
+	<br>
+
+	<br>
+   <div class="container " id="divContainer"  style="display:dnone">
+      <div class="row ">
+        <div class="col-md-4"  style="text-align:center">
+			<img src="img/team-detail-russel.png"/>        
+        
+        </div>
+        <div class="col-md-4">
+        <h3><img src="img/Spotify_logo_detail.png" style="height:35px" />   | Developer</h3>
+        <p>
+        Spotify es una aplicación empleada para la reproducción de música vía streaming.
+        Permite escuchar musica en modo radio buscando por artista, álbum o listas de reproducción 
+        creadas por los propios usuarios. Spotify, que tiene su sede en Estocolmo, Suecia, 
+        ha firmado acuerdos con las discográficas Universal Music, Sony BMG, EMI Music, Hollywood Records y Warner Music entre otras.
+        
+        </p>
+       </div>
+        <div class="col-md-4">
+          <h3>¿Tienes un proyecto donde necesites una biblioteca musical?</h3>
+			<p>
+			Te ayudamos a desarrollarlo utilizando las <b>APIs de Spotify</b>. Podemos acceder a su bliblioteca musical, 
+			listar canciones por album, buscar por artista y escuchar la canción en modo de radio. <br><br>
+			Adicionalmente puedes guardar información acerca de las preferencias de tus usuarios, tener estadisticas, sacar tendencias. 
+			Puedes hacer Playlist para tu rokola virtual, rankear preferencias musicales, tomar peticiones para una estación de radio
+			y lo que necesite tu negocio.
+			
+			</p>
+			       
+			       
+			
+
+
+        </div>
+      </div>
+
+      <hr>
+      <form id="search-form">
+		<div class="container ">
+			<div class="row ">
+				<div class="col-md-12">
+				 <h3>Busca un álbum por Artísta</h3>
+				</div>
+			</div>		
+			<div class="row ">
+				<div class="col-md-5">
+					<input type="text" id="query" value="" class="form-control" placeholder="Nombre del Artista" />
+				</div>
+				<div class="col-md-2">
+					<button class="btn btn-primary" id="search" > 
+					<span class="glyphicon glyphicon-search"></span> Buscar</button>				
+					
+				</div>
+				<div class="col-md-5">
+				&nbsp;
+				</div>				
+			</div>
+		</div>
+		</form> 
+		<hr>
+
+	  <div class="jumbotron">
+	    <div class="container">
+			<div id="results"></div>
+	    </div>
+	  </div>
+
+
+
+      <footer style="text-align:center;color:#000">
+		  Erik Martinez Roqueñi | Insurgentes Sur No 476-304 M&eacute;xico D.F. C.P. 06760 Tel&eacute;fono (55) 6307-2017
+		  Nextel: 6581-6104 &nbsp;&nbsp;ID: 32*14*65707&nbsp;&nbsp;  <a href="mailto:me@erikmartinez.mx" >me@erikmartinez.mx</a>
+		  
+      </footer>
+    </div>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+
+<script src="http://cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"> </script>
+
+<script id="results-template" type="text/x-handlebars-template">
+    {{#each albums.items}}
+    <div style="background-image:url({{images.0.url}})" data-album-id="{{id}}" class="cover"></div>
+    {{/each}}
+</script>
+
+<script>
+//find template and compile it
+var templateSource = document.getElementById('results-template').innerHTML,
+    template = Handlebars.compile(templateSource),
+    resultsPlaceholder = document.getElementById('results'),
+    playingCssClass = 'playing',
+    audioObject = null;
+
+var fetchTracks = function (albumId, callback) {
+    $.ajax({
+        url: 'https://api.spotify.com/v1/albums/' + albumId,
+        success: function (response) {
+            callback(response);
+        }
+    });
+};
+
+var searchAlbums = function (query) {
+    $.ajax({
+        url: 'https://api.spotify.com/v1/search',
+        data: {
+            q: query,
+            type: 'album'
+        },
+        success: function (response) {
+            resultsPlaceholder.innerHTML = template(response);
+        }
+    });
+};
+
+results.addEventListener('click', function(e) {
+    var target = e.target;
+    if (target !== null && target.classList.contains('cover')) {
+        if (target.classList.contains(playingCssClass)) {
+            audioObject.pause();
+        } else {
+            if (audioObject) {
+                audioObject.pause();
+            }
+            fetchTracks(target.getAttribute('data-album-id'), function(data) {            
+                audioObject = new Audio(data.tracks.items[0].preview_url);
+                audioObject.play();
+                target.classList.add(playingCssClass);
+                audioObject.addEventListener('ended', function() {
+                    target.classList.remove(playingCssClass);
+                });
+                audioObject.addEventListener('pause', function() {
+                    target.classList.remove(playingCssClass);
+               });
+            });
+        }
+    }
+});
+
+document.getElementById('search-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    searchAlbums(document.getElementById('query').value);
+}, false);
+
+</script>
+
+

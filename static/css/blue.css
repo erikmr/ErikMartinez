@@ -1,0 +1,58 @@
+/* COLOR CSS FILE */
+
+a{
+	color: #609cee;
+}
+
+a:hover{
+	color: #296bc6;
+}
+
+/* Header */
+.header .navbar-default{
+	border-top: 3px solid #296bc6;
+}
+
+.header .navbar-default .navbar-brand {
+	background: #609cee;
+}
+
+.header .navbar-default .navbar-nav > li a:hover{
+	color: #609cee;
+}
+
+/* Header end */
+
+.container hr,
+.container .heading hr  {
+	border-top: 5px solid #609cee;
+}
+
+/* Objective */
+
+.objective .objective-quote .quote{
+	color: #609cee;
+}
+
+/* Work */
+
+.work .work-item .work-img .work-hover{
+	background: #609cee;
+}
+
+/* Skill & Experience */
+
+.skill .experience-content h6{
+	background: #609cee;
+}
+
+/* Profile */
+
+.profile .profile-content .tab-content{
+	border-left: 4px solid #609cee;
+}
+
+/* Back to top */
+.scroll-to-top {
+	background: #609cee; 
+}
